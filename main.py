@@ -4,7 +4,7 @@ from datetime import datetime, date
 
 app=Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']='sqllite:///customer_details.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///customer_details.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 db=SQLAlchemy(app)
 
@@ -16,13 +16,13 @@ class CustomerDetails(db.Model):
     amount=db.Column(db.Integer,nullable=False)
     date_of_purchase=db.Column(db.Date,nullable=False)
 
-@app.route('/details',methods=['POST','GET'])
+@app.route('/details',methods=['GET','POST'])
 def details():
     if request.method=='POST':
         try:
             username=request.form.get('username','Unknown')
             contact_number=request.form.get('contact_number','0000000000')
-            number_of_items=int(request.form.get('no_of_items',0))
+            number_of_items=int(request.form.get('number_of_items',0))
             amount=int(request.form.get('amount',0))
             current_date=request.form.get('current_date',str(date.today()))
 
@@ -39,14 +39,26 @@ def details():
             db.session.commit()
             return render_template('index.html',message="Customer Details Successfully Added")
         except Exception as e:
-            return render_template('page.html',username=None,contact_number=None)
-        
+            return render_template('winner.html',username=None,contact_number=None)
+
+@app.route('/winner',methods=['GET','POST'])
+def winner():
+    today=date.today()
+    winner=CustomerDetails.query.filter_by(date_of_purchase=today).order_by(
+        CustomerDetails.total_amount.desc()
+    ).first()
+    if winner:
+        return render_template('winner.html', username=winner.customer_name,contact_number=winner.contact_number)
+    else:
+        return render_template('winner.html',username=None,contact_number=None)
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
+with app.app_context():
+    db.create_all()
 
-
-if __name__=='__main__':
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080,debug=True)
             

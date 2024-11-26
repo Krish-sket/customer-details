@@ -1,0 +1,24 @@
+<html>
+
+<head>
+    <title>Winner</title>
+</head>
+
+<body>
+    <div align="center">
+        <div align="center" class="border">
+            <div class="header">
+                <h1 class="word">Today's Winner</h1>
+            </div>
+            {% if username %}
+            <h4 class="bottom">The highest purchase is done by <b>{{username}}</b>, whose contact number
+                is<b>{{contact_number}}</b></h4>
+            {% else %}
+            <h1 class="bottom">No winner found for today</h1>
+            {% endif %}
+            <a href="/" class="btn">Back to Entry Page</a>
+        </div>
+    </div>
+</body>
+
+</html>
