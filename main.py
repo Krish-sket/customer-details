@@ -45,7 +45,7 @@ def details():
 def winner():
     today=date.today()
     winner=CustomerDetails.query.filter_by(date_of_purchase=today).order_by(
-        CustomerDetails.total_amount.desc()
+        CustomerDetails.amount.desc()
     ).first()
     if winner:
         return render_template('winner.html', username=winner.customer_name,contact_number=winner.contact_number)
